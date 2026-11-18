@@ -67,3 +67,6 @@ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vie
 footer{position:relative;margin-top:110px}
 footer:before{content:"";position:absolute;left:0;right:0;top:-59px;height:60px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath fill='%2306182f' d='M0 30c240-40 480 40 720 0s480-40 720 0v30H0z'/%3E%3C/svg%3E") bottom/100% 100% no-repeat}
 @media(prefers-reduced-motion:no-preference){.hero:after{animation:wv 12s ease-in-out infinite alternate}@keyframes wv{to{background-position:30px bottom}}}
+.nl3 .n{align-content:start;transition:.2s}.nl3 .n:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(6,24,47,.09)}
+.nl3 .n h3{font-size:16px}.n .src{font-size:12px;font-weight:600;color:var(--navy2)}
+.n .cl{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
