@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Admin – Dr. Nur Azlina</title><link rel="stylesheet" href="/assets/style.css"></head><body>
+<main class="w" style="max-width:760px;padding-top:32px">
+<div id="login"><h1 style="color:var(--ink);font-size:30px">Admin</h1><p class="lead">Masukkan password untuk mengelola berita.</p><input id="pw" type="password" placeholder="Password" autocomplete="current-password"><p id="err" style="color:#c0392b;font-size:14px"></p><button class="btn d" id="go">Masuk</button></div>
+<div id="app" hidden><h1 style="color:var(--ink);font-size:30px">Kelola Berita</h1><p class="lead">Ubah daftar, lalu klik <b>Terbitkan</b>. Situs diperbarui sekitar 1 menit kemudian.</p>
+<div class="box"><h4>TAMBAH / UBAH</h4><input type="hidden" id="id"><label for="t">Judul</label><input id="t"><label for="u">Tautan (URL)</label><input id="u" type="url" placeholder="https://…"><label for="s">Sumber</label><input id="s"><label for="d">Tanggal / tahun</label><input id="d" placeholder="mis. 19 April 2024"><label for="j">Jenis</label><select id="j"><option>Berita</option><option>Kegiatan</option><option>Publikasi</option><option>Kampus</option></select><label for="n">Catatan</label><textarea id="n" rows="3"></textarea>
+<div style="margin-top:14px"><button class="btn d" id="sv" style="margin:0 8px 0 0">Simpan ke daftar</button><button class="btn l" id="cl" style="margin:0">Kosongkan</button></div></div>
+<div style="position:sticky;top:0;background:#fff;padding:12px 0;z-index:5"><button class="btn d" id="pub" style="margin:0 8px 0 0">Terbitkan ke situs</button><span id="st" style="font-size:14px;color:var(--mut)"></span></div>
+<div id="list" class="nl"></div></div></main>
+<style>label{display:block;font-size:13px;font-weight:700;margin:12px 0 4px}.n .a button{margin-right:6px}</style>
+<script>
+var $=function(i){return document.getElementById(i)},D=[],PW='';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function api(b){b.password=PW;return fetch('/api/berita',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Gagal');return j})})}
+$('go').onclick=function(){PW=$('pw').value;$('err').textContent='';api({action:'check'}).then(function(){return fetch('/assets/berita.json',{cache:'no-cache'}).then(function(r){return r.json()})}).then(function(x){D=x;$('login').hidden=true;$('app').hidden=false;render()}).catch(function(e){$('err').textContent=e.message})};
+$('pw').onkeydown=function(e){if(e.key==='Enter')$('go').click()};
+function render(){$('list').innerHTML=D.map(function(x){return '<article class="n"><div class="m"><span class="tag k">'+esc(x.j)+'</span><span>'+esc(x.s)+'</span><span>'+esc(x.d)+'</span></div><h3>'+esc(x.t)+'</h3><div class="a"><button data-e="'+esc(x.id)+'">Ubah</button><button data-d="'+esc(x.id)+'">Hapus</button></div></article>'}).join('')}
+function clear(){['id','t','u','s','d','n'].forEach(function(i){$(i).value=''})}
+$('cl').onclick=clear;
+$('sv').onclick=function(){var t=$('t').value.trim();if(!t){alert('Judul wajib diisi.');return}var o={id:$('id').value||'u'+Date.now(),t:t,u:$('u').value.trim(),s:$('s').value.trim(),d:$('d').value.trim(),j:$('j').value,n:$('n').value.trim()};
+var i=D.findIndex(function(x){return x.id===o.id});if(i>-1)D[i]=o;else D.unshift(o);clear();render();$('st').textContent='Ada perubahan yang belum diterbitkan.'};
+$('list').onclick=function(e){var d=e.target.getAttribute('data-d'),ed=e.target.getAttribute('data-e');
+if(d&&confirm('Hapus berita ini?')){D=D.filter(function(x){return x.id!==d});render();$('st').textContent='Ada perubahan yang belum diterbitkan.'}
+if(ed){var x=D.find(function(y){return y.id===ed});['id','t','u','s','d','n'].forEach(function(k){$(k).value=x[k==='id'?'id':k]||''});$('j').value=x.j;scrollTo({top:0,behavior:'smooth'})}};
+$('pub').onclick=function(){$('pub').disabled=true;$('st').textContent='Menerbitkan…';api({items:D}).then(function(){$('st').textContent='Berhasil. Situs akan diperbarui sekitar 1 menit.'}).catch(function(e){$('st').textContent='Gagal: '+e.message}).then(function(){$('pub').disabled=false})};
+</script></body></html>
